@@ -166,11 +166,26 @@ function createPlaylistView(playlist, parent, maxSecondsPerSide) {
 	parent.append(el);
 
 	// Send all tracks in playlist for setting labels
-	var title = 'asdf';//generateTitle(playlist.data.all());
+	var bar = new foo($(parent));
+	var title = generateTitle(playlist.data.all(), bar.titleWasGenerated);
 	// Add label to side
 	var label = createTextElement('<p>', title);
 	parent.find('.imageWrapper img').before(label);
 }
+
+function generateTitle(foo, bar){
+	bar('123');
+}
+
+function foo(parent) {
+	var _parent = parent;
+
+	this.titleWasGenerated = function (title) {
+		var label = createTextElement('<p>', title);
+		_parent.find('.imageWrapper img').before(label);	
+	}
+}
+
 
 function pad(number, length) { 
 	return (number+"").length >= length ? number + "" : pad("0" + number, length);
