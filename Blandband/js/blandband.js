@@ -173,10 +173,6 @@ function createPlaylistView(playlist, parent, maxSecondsPerSide) {
 	parent.find('.imageWrapper img').before(label);
 }
 
-function generateTitle(foo, bar){
-	bar('123');
-}
-
 function foo(parent) {
 	var _parent = parent;
 

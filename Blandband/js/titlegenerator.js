@@ -12,7 +12,7 @@ var getInfoUrl = "http://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key
 
 var responseCount = 0;
 
-var generateTitle = function(tracks) {
+var generateTitle = function(tracks, callback) {
 	ratings = new Array(tracks.length);
 
 	var trackGenres = new Array();
@@ -49,7 +49,7 @@ var generateTitle = function(tracks) {
 								distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
 							}
 							console.log(distinctGenres);
-							generateTitleFromRatingsAndGenres(ratings, distinctGenres);
+							generateTitleFromRatingsAndGenres(ratings, distinctGenres, callback);
 						}
 						return;
 					}
@@ -73,7 +73,7 @@ var generateTitle = function(tracks) {
 	
 }
 
-var generateTitleFromRatingsAndGenres = function(ratings, genres) {
+var generateTitleFromRatingsAndGenres = function(ratings, genres, callback) {
 	var sum = 0;
 	for(var i = 0; i < ratings.length; i++) {
 		sum += ratings[i];
@@ -100,7 +100,7 @@ var generateTitleFromRatingsAndGenres = function(ratings, genres) {
 	title += getRandomWord(words[1][genreIndex][ratingIndex]);
 	
 	console.log(title);
-	return title;
+	callback(title);
 }
 
 var getGenreIndex = function(genre) {
