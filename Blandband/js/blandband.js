@@ -6,6 +6,8 @@ var m = sp.require('sp://import/scripts/api/models');
 var v = sp.require('sp://import/scripts/api/views');
 var dom = sp.require('sp://import/scripts/dom');
 
+console.log(m.Playlist);
+
 function init()
 {
 	$('.deck-picker a').on('click', function(e){
@@ -23,32 +25,60 @@ function init()
 
 function importPlaylistView(maxLength)
 {
-	var imgUrl = (maxLength > 60) ? "/assets/cassette_90_large.png" : "/assets/cassette_60_large.png";
+	var imgUrl = (maxLength > 60) ? "/assets/cassette_90.png" : "/assets/cassette_60.png";
 	var sectionImport = $(document.createElement('section'));
 	sectionImport.addClass('import-playlist');
 
 	var title = createTextElement('<h2>', 'Du har valt ' + maxLength + ' minuter');
 	sectionImport.append(title);
 
-	var img = $('<img>');
-	img.attr('src', imgUrl);
-	sectionImport.append(img);
+	var wrapperSideA = $(document.createElement('div'));
+	wrapperSideA.addClass('wrapper-side-a');
+	$(sectionImport).append(wrapperSideA);
+
+	var imgSideA = $('<img>');
+	imgSideA.attr('src', imgUrl);
+	imgSideA.addClass('img-side-a');
+	wrapperSideA.append(imgSideA);
 
 	var labelA = createTextElement('<label>', 'Sida A');
-	sectionImport.append(labelA);
-	var sideA = createInputElement();
-	sectionImport.append(sideA);
+	wrapperSideA.append(labelA);
+	var sideA = createInputElement('playlist-input-a');
+	wrapperSideA.append(sideA);
 
-	var submit = createTextElement('<button>', 'Importera');
-	submit.addClass('add-playlist');
-	submit.on('click', function(e) {
-		if(!isValidPlayList(sideA.val(), maxLength)) {
-			alert("Invalid playlist for Side A, please try another.");
-		}
+	var wrapperSideB = $(document.createElement('div'));
+	wrapperSideB.addClass('wrapper-side-b');
+	$(sectionImport).append(wrapperSideB);
+
+	var submitSideA = createTextElement('<button>', 'Importera');
+
+	submitSideA.addClass('add-playlist-a');
+	submitSideA.on('click', function(e) {
+		validatePlaylist(sideA.val(), maxLength, labelA);
 	});
-	sectionImport.append(submit);
-
+	
 	$('.app').append(sectionImport);
+
+	$('.playlist-input-a').after(submitSideA);
+
+	var imgSideB = $('<img>');
+	imgSideB.attr('src', imgUrl);
+	imgSideB.addClass('img-side-b');
+	wrapperSideB.append(imgSideB);	
+
+	var labelB = createTextElement('<label>', 'Sida B');
+	wrapperSideB.append(labelB);
+	var sideB = createInputElement('playlist-input-b');
+	wrapperSideB.append(sideB);	
+
+
+	var submitSideB = createTextElement('<button>', 'Importera');
+	submitSideB.addClass('add-playlist-b');
+	submitSideB.on('click', function(e) {
+		validatePlaylist(sideB.val(), maxLength, labelB);
+	});
+	wrapperSideB.append(submitSideB);
+
 }
 
 function createTextElement(element, text) {
@@ -57,17 +87,55 @@ function createTextElement(element, text) {
 	return $element;
 }
 
-function createInputElement() {
+function createInputElement(className) {
 	var input = $(document.createElement('input'));
-	input.addClass('playlist-input');
+	input.addClass(className);
 	input.attr('placeholder', 'Klistra in din playlist URI');
 	return input;
 }
 
-function parsePlayList(playListUri, maxLength) {
-	var playlist = m.Playlist.fromURI(playListUri);
-	if(playlist.data.getDuration() > maxLength * 60)
-	{
-		alert("Invalid playlist, please try another.");
+function validatePlaylist(val, maxLength, parent)
+{
+	var playlist = getPlayList(val);
+	if (playlist == null) {
+		alert("Ogiltig playlist URI!");
 	}
+	else if(!isValidPlayList(playlist, maxLength)) {
+		alert("Din playlist är tyvärr för lång, prova med någon annan!");
+	}
+	else {
+		createPlaylistView(playlist, parent);
+	}
+}
+
+function getPlayList(playListUri) {
+	try {
+		return m.Playlist.fromURI(playListUri);
+	}
+	catch(err) {
+		return null;
+	}
+}
+
+function isValidPlayList(playlist, maxLength) {
+	if (playlist.data.getDuration() > (maxLength * 60) / 2)
+		return false;
+	else
+		return true;
+}
+
+function createPlaylistView(playlist, parent) {
+	if (parent.parent().find('.sp-list')) {
+		parent.parent().find('.sp-list').remove();
+	}
+	var list = new v.List(playlist, function(track) {
+		return new v.Track(track, v.Track.FIELD.STAR | v.Track.FIELD.POPULARTIY | v.Track.FIELD.ARTIST | v.Track.FIELD.NAME | v.Track.FIELD.DURATION );
+	});
+	parent.before(list.node);
+	var duration = playlist.data.getDuration();
+	parent.before(createTextElement('<p class="data">', 'Längd Sida A: ' + Math.floor(duration/60) + ':' + pad(duration%60, 2)));
+}
+
+function pad(number, length) { 
+	return (number+"").length >= length ? number + "" : pad("0" + number, length);
 }

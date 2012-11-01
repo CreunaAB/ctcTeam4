@@ -16,7 +16,7 @@ h2 {
 }
 
 .app {
-	width: 850px;
+	width: 800px;
 	margin: 0 auto;
 }
 
@@ -32,13 +32,44 @@ h2 {
 .import-playlist input {
 	display: block;
 	border: 0;
-	width: 690px;
+	width: 790px;
 	font-family: Arial;
 	font-size: 14px;
 	padding: 5px;
 	margin: 0;
 }
 
+.import-playlist button {
+	display: block;
+	margin-bottom: 20px;
+}
+
 label{
 	display:block;
+	clear: both;
+	font-size: 36px;
+	color: yellow;
+	line-height: 1em;
+	margin-top: 10px;
+}
+
+.sp-list {
+	float: left;
+	width: 400px;
+}
+
+.import-playlist img {
+	margin-bottom: 10px;
+}
+
+.import-playlist .data {
+	clear: left;
+}
+
+.img-side-a {
+	float: left;
+}
+
+.img-side-b {
+	float: right;
 }
