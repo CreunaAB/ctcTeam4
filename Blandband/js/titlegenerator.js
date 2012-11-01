@@ -1,7 +1,7 @@
 
 var words = [
-	[['Indie,Alternative,Shoe Gaze,Arty','Happy,Tween,Glowing'], ['Gangsta,Tha','Whigger,Yo MTV Raps'], ['Beard,Howling,Dusty,Old Fart', 'Yuppie,Svennish'], ["Corpse Painted,The Pathologist's", "Sleazy"]], 
-	[['Sleepover','Party,Knockout,Festival'], ['Shootout,Street','Beatbox competition,Underground'], ['Sausage Fest', 'Slam,Festival,Fredagsmys'], ["Basement Gig","Ozzfest,Sleaze"]]
+	[['Indie,Alternative,Shoe Gaze,Arty','Happy,Tween,Glowing,Spectacular'], ['Gangsta,Tha','Whigger,Yo MTV Raps,Vanilla'], ['Beard,Howling,Dusty,Old Fart', 'Yuppie,Svennish,Top List'], ["Corpse Painted,The Pathologist's", "Sleazy,Hair Spray"]], 
+	[['Sleepover','Party,Knockout,Festival'], ['Shootout,Street','Beatbox competition,Hood Karaoke'], ['Sausage Fest,Basement Jam', 'Barbecue,Slam,Festival,Fredagsmys'], ["Basement Gig","Ozzfest,Sleaze"]]
 ];
 
 var allGenres = [
@@ -20,6 +20,7 @@ var generateTitle = function(tracks, callback) {
 	var responsesLeft = tracks.length;
 	for(var i = 0; i < tracks.length; i++) {
 		var track = new m.Track.fromURI(tracks[i]);
+		// console.log(track);
 		ratings[i] = track.data.popularity;
 		var artistName = track.artists[0].name;
 		/* getJSON */
@@ -27,50 +28,49 @@ var generateTitle = function(tracks, callback) {
 		// console.log(url);
 		// var trackGenres = "";
 		var json = $.getJSON(url, function(data){
-			// console.log(data);
-			for(var j = 0; j < data.track.toptags.tag.length; j++) {
-				// console.log(trackGenres[i]);
-				var tagName = data.track.toptags.tag[j].name;
-				for(var k = 0; k < allGenres.length; k++) {
-					if(allGenres[k].indexOf(tagName.toLowerCase()) >= 0) {
-						 // console.log(allGenres[k]);
-						trackGenres.push(allGenres[k][0]);
-						responsesLeft--;
-						if(responsesLeft === 0) {
-							var distinctGenres = [];
-							
-							$.each(trackGenres, function(i, element){
-								if($.inArray(element, distinctGenres) === -1) distinctGenres.push(element);
-							});
-							
-							if(distinctGenres.length < 3) {
-								distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
-								distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
-								distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
+			console.log(data);
+			console.log(data.error);
+			if(data.error === undefined && data.track.toptags.tag != undefined) {
+				for(var j = 0; j < data.track.toptags.tag.length; j++) {
+					// console.log(trackGenres[i]);
+					var tagName = data.track.toptags.tag[j].name;
+					for(var k = 0; k < allGenres.length; k++) {
+						if(allGenres[k].indexOf(tagName.toLowerCase()) >= 0) {
+							 // console.log(allGenres[k]);
+							trackGenres.push(allGenres[k][0]);
+							responsesLeft--;
+							if(responsesLeft === 0) {
+								cleanupAndLeave(ratings, trackGenres, callback);
 							}
-							console.log(distinctGenres);
-							generateTitleFromRatingsAndGenres(ratings, distinctGenres, callback);
+							return;
 						}
-						return;
 					}
 				}
+			} else {
+				responsesLeft--;
+				if(responsesLeft === 0) {
+					cleanupAndLeave(ratings, trackGenres, callback);
+				}
+				return;
 			}
 		});
 	}
+}
 
-	// console.log(trackGenres);		
+var cleanupAndLeave = function(ratings, trackGenres, callback) {
+	var distinctGenres = [];
 	
-	// var sum = 0;
-	// for(var i = 0; i < ratings.length; i++) {
-		// sum += ratings[i];
-	// }
-	// var average = sum / ratings.length;
+	$.each(trackGenres, function(i, element){
+		if($.inArray(element, distinctGenres) === -1) distinctGenres.push(element);
+	});
 	
-	// var ratingIndex = average < 40 ? 0 : 1;
-	
-	// console.log(generateTitleFromRatingsAndGenres(ratingIndex, ['pop','metal','metal']));
-	
-	
+	if(distinctGenres.length < 3) {
+		distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
+		distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
+		distinctGenres.push(distinctGenres[distinctGenres.length - 1]);
+	}
+	// console.log(distinctGenres);
+	generateTitleFromRatingsAndGenres(ratings, distinctGenres, callback);
 }
 
 var generateTitleFromRatingsAndGenres = function(ratings, genres, callback) {
@@ -82,9 +82,14 @@ var generateTitleFromRatingsAndGenres = function(ratings, genres, callback) {
 	
 	var ratingIndex = average < 40 ? 0 : 1;
 	
-	// console.log(generatetitlefromratingsandgenres(ratingindex, ['pop','metal','metal']));
+	console.log(genres);
 
 	var title = "";
+	
+	if($.inArray(undefined, genres) >= 0) {
+		callback('Blandband!');
+		return;
+	}
 	
 	var genreIndex = getGenreIndex(genres[0]);
 	firstSubstantive = getRandomWord(words[0][genreIndex][ratingIndex]);
@@ -96,7 +101,7 @@ var generateTitleFromRatingsAndGenres = function(ratings, genres, callback) {
 	
 	title += substantive + ' ';
 	
-	var genreIndex = getGenreIndex(genres[0]);
+	var genreIndex = getGenreIndex(genres[2]);
 	title += getRandomWord(words[1][genreIndex][ratingIndex]);
 	
 	console.log(title);
