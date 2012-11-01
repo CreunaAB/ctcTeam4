@@ -26,6 +26,7 @@ function init()
 function importPlaylistView(maxLength)
 {
 	var imgUrl = (maxLength > 60) ? "/assets/cassette_90.png" : "/assets/cassette_60.png";
+	var imgUrl2 = (maxLength > 60) ? "/assets/cassette_90_sideb.png" : "/assets/cassette_60_sideb.png"; 
 	var sectionImport = $(document.createElement('section'));
 	sectionImport.addClass('import-playlist');
 	sectionImport.addClass('c' + maxLength);
@@ -37,6 +38,18 @@ function importPlaylistView(maxLength)
 	wrapperSideA.addClass('wrapper-side-a');
 	$(sectionImport).append(wrapperSideA);
 
+	var labelA = createTextElement('<label>', 'Sida A');
+	labelA.attr('for', 'side_a')
+	wrapperSideA.append(labelA);
+	var sideA = createInputElement('side_a', 'playlist-input-a');
+	wrapperSideA.append(sideA);
+
+	var submitSideA = createTextElement('<button>', 'Importera');
+	submitSideA.addClass('add-playlist-a');
+	submitSideA.on('click', function(e) {
+		validatePlaylist(sideA.val(), maxLength, wrapperSideA);
+	});
+	
 	var imgWrapperSideA = $(document.createElement('div'));
 	imgWrapperSideA.addClass('imageWrapper');
 	var imgSideA = $('<img>');
@@ -45,47 +58,34 @@ function importPlaylistView(maxLength)
 	imgWrapperSideA.append(imgSideA);
 	wrapperSideA.append(imgWrapperSideA);
 
-	var labelA = createTextElement('<label>', 'Sida A');
-	wrapperSideA.append(labelA);
-	var sideA = createInputElement('playlist-input-a');
-	wrapperSideA.append(sideA);
+	$('.app').append(sectionImport);
+
+	$('.playlist-input-a').after(submitSideA);
 
 	var wrapperSideB = $(document.createElement('div'));
 	wrapperSideB.addClass('wrapper-side-b');
 	$(sectionImport).append(wrapperSideB);
 
-	var submitSideA = createTextElement('<button>', 'Importera');
-
-	submitSideA.addClass('add-playlist-a');
-	submitSideA.on('click', function(e) {
-		validatePlaylist(sideA.val(), maxLength, labelA);
-	});
-	
-	$('.app').append(sectionImport);
-
-	$('.playlist-input-a').after(submitSideA);
-
-	var imgWrapperSideB = $(document.createElement('div'));
-	imgWrapperSideB.addClass('imageWrapper');
-	var imgSideB = $('<img>');
-	imgSideB.attr('src', imgUrl);
-	imgSideB.addClass('img-side-b');
-	imgWrapperSideB.append(imgSideB);
-	wrapperSideB.append(imgWrapperSideB);	
-
 	var labelB = createTextElement('<label>', 'Sida B');
+	labelB.attr('for', 'side_b')
 	wrapperSideB.append(labelB);
-	var sideB = createInputElement('playlist-input-b');
+	var sideB = createInputElement('side_b', 'playlist-input-b');
 	wrapperSideB.append(sideB);	
-
 
 	var submitSideB = createTextElement('<button>', 'Importera');
 	submitSideB.addClass('add-playlist-b');
 	submitSideB.on('click', function(e) {
-		validatePlaylist(sideB.val(), maxLength, labelB);
+		validatePlaylist(sideB.val(), maxLength, wrapperSideB);
 	});
 	wrapperSideB.append(submitSideB);
 
+	var imgWrapperSideB = $(document.createElement('div'));
+	imgWrapperSideB.addClass('imageWrapper');
+	var imgSideB = $('<img>');
+	imgSideB.attr('src', imgUrl2);
+	imgSideB.addClass('img-side-b');
+	imgWrapperSideB.append(imgSideB);
+	wrapperSideB.append(imgWrapperSideB);
 }
 
 function createTextElement(element, text) {
@@ -94,10 +94,16 @@ function createTextElement(element, text) {
 	return $element;
 }
 
-function createInputElement(className) {
+function createInputElement(id, className) {
 	var input = $(document.createElement('input'));
 	input.addClass(className);
 	input.attr('placeholder', 'Klistra in din playlist URI');
+	input.attr('id', id)
+	input.on('dragenter', function(){
+		if(input.val().length > 0)
+			input.val('');
+	});
+
 	return input;
 }
 
@@ -112,8 +118,6 @@ function validatePlaylist(val, maxLength, parent)
 		alert("Din playlist är tyvärr för lång, prova med någon annan!");
 	}
 	else {
-		// Send all tracks in playlist for setting labels
-		generateTitle(new m.Track.fromURI(playlist.data.all());
 		createPlaylistView(playlist, parent, maxSecondsPerSide);
 	}
 }
@@ -135,21 +139,37 @@ function isValidPlayList(playlist, maxSecondsPerSide) {
 }
 
 function createPlaylistView(playlist, parent, maxSecondsPerSide) {
-	if (parent.parent().find('.sp-list')) {
-		parent.parent().find('.sp-list').remove();
+	if (parent.find('.sp-list')) {
+		parent.find('.sp-list').remove();
 	}
+	parent.find('.data').remove();
 	var list = new v.List(playlist, function(track) {
 		return new v.Track(track, v.Track.FIELD.STAR | v.Track.FIELD.POPULARTIY | v.Track.FIELD.ARTIST | v.Track.FIELD.NAME | v.Track.FIELD.DURATION );
 	});
-	parent.before(list.node);
+	parent.find('.imageWrapper').after(list.node);
 	var duration = playlist.data.getDuration();
-	parent.before(createTextElement('<p class="data">', 'Längd Sida A: ' + Math.floor(duration/60) + ':' + pad(duration%60, 2) + "min"));
+	parent.append(createTextElement('<p class="data">', 'Total Time: ' + Math.floor(duration/60) + ':' + pad(duration%60, 2) + " min"));
 	duration = maxSecondsPerSide - duration;
-	parent.before(createTextElement('<p class="data">', 'Wasted Time: ' + Math.floor(duration/60) + ':' + pad(duration%60, 2) + "min"));
+	var el = createTextElement('<p class="data">', 'Wasted Time: ' + Math.floor(duration/60) + ':' + pad(duration%60, 2) + " min");
+	if(duration < 5) {
+		el.addClass("good");
+	}
+	else if(duration < 20) {
+		el.addClass("decent");
+	}
+	else if(duration < 60) {
+		el.addClass("bad");
+	}
+	else {
+		el.addClass("fail");
+	}
+	parent.append(el);
 
+	// Send all tracks in playlist for setting labels
+	var title = 'asdf';//generateTitle(playlist.data.all());
 	// Add label to side
-	var label = createTextElement('<p>', 'Titel');
-	parent.parent().find('.imageWrapper img').before(label);
+	var label = createTextElement('<p>', title);
+	parent.find('.imageWrapper img').before(label);
 }
 
 function pad(number, length) { 
