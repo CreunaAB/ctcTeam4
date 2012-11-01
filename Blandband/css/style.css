@@ -59,7 +59,34 @@ label{
 }
 
 .import-playlist img {
-	margin-bottom: 10px;
+	margin-bottom: 10px;	
+}
+
+.import-playlist .imageWrapper {
+	position: relative;
+}
+
+.import-playlist .imageWrapper p {
+	position: absolute;
+	top: 45px;
+	left: 90px;
+	color: #000;
+	font-size: 24px;
+}
+.import-playlist .imageWrapper p {
+	font-size: 18px;
+}	
+.c90 .wrapper-side-a .imageWrapper p {
+	top: 40px;
+	left: 40px;
+}
+.c60 .wrapper-side-b .imageWrapper p {
+	top: 45px;
+	left: 90px;
+}
+.c90 .wrapper-side-b .imageWrapper p {
+	top: 40px;
+	left: 60px;
 }
 
 .import-playlist .data {
@@ -70,6 +97,6 @@ label{
 	float: left;
 }
 
-.img-side-b {
+.wrapper-side-b .imageWrapper {
 	float: right;
 }
