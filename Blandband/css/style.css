@@ -1,23 +1,24 @@
 body {
-	padding-bottom: 25px;
+	padding-bottom: 85px;
 }
 
 h1 {
 	margin: 20px auto 40px auto;
 	font-size: 35px;
-	width: 400px;
-	font-family: Lucida;
+	font-family: Georgia;
 	text-align: center;
 }
 
 h2 {
 	font-size: 20px;
-	margin-bottom: 20px;
+	margin-bottom: 40px;
+	font-family: Georgia;
 }
 
 .app {
 	width: 800px;
 	margin: 0 auto;
+	overflow: hidden;
 }
 
 .deck-picker {
@@ -27,21 +28,29 @@ h2 {
 
 .deck-picker span {
 	display: block;
+	color: #fff;
+	font-size: 24px;
+	font-weight: bold;
+	margin: 0 auto 15px auto;
+	width: 150px;
 }
 
 .import-playlist input {
 	display: block;
 	border: 0;
-	width: 790px;
+	width: 690px;
 	font-family: Arial;
 	font-size: 14px;
 	padding: 5px;
 	margin: 0;
+	float:left;
 }
 
 .import-playlist button {
 	display: block;
-	margin-bottom: 20px;
+	padding: 5px;
+	float:right;
+	border:0;
 }
 
 label{
@@ -50,16 +59,22 @@ label{
 	font-size: 36px;
 	color: yellow;
 	line-height: 1em;
-	margin-top: 10px;
+	margin: 10px 0	;
 }
 
 .sp-list {
 	float: left;
 	width: 400px;
+	margin: 10px 0 10px 0;
+}
+
+.cassette-picker {
+	margin: 0 auto;
+	width: 720px;
 }
 
 .import-playlist img {
-	margin-bottom: 10px;	
+	margin: 10px 0;	
 }
 
 .import-playlist .imageWrapper {
@@ -68,25 +83,31 @@ label{
 
 .import-playlist .imageWrapper p {
 	position: absolute;
-	top: 45px;
-	left: 90px;
+	top: 65px;
+	left: 50px;
 	color: #000;
 	font-size: 24px;
 }
+
 .import-playlist .imageWrapper p {
-	font-size: 18px;
-}	
-.c90 .wrapper-side-a .imageWrapper p {
-	top: 40px;
-	left: 40px;
+	font-size: 28px;	
 }
+
+.wrapper-side-a,
+.wrapper-side-b {
+	overflow: hidden;
+	margin-bottom: 20px;
+}
+
 .c60 .wrapper-side-b .imageWrapper p {
-	top: 45px;
-	left: 90px;
+	top: 40px;
+}
+.c90 .imageWrapper p {
+	top: 70px;
+	left: 70px;
 }
 .c90 .wrapper-side-b .imageWrapper p {
-	top: 40px;
-	left: 60px;
+	top: 45px;
 }
 
 .import-playlist .data {
@@ -98,5 +119,18 @@ label{
 }
 
 .wrapper-side-b .imageWrapper {
+	clear: right;
 	float: right;
+}
+p.good {
+	color: green;
+}
+p.decent {
+	color: yellow;
+}
+p.bad {
+	color: orange;
+}
+p.fail {
+	color: red;
 }

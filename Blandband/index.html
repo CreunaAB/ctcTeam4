@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="sp://import/css/api.css">
     <link rel="stylesheet" href="./css/style.css" />
 </head>
-<body onload="init();">
+<body>
 <div class="app">
-	<h1>Blandband v1.0</h1>
+	<h1><img src="/assets/logotype.png"></h1>
 	<section class="cassette-picker">
 		<h2>Välj din kassett</h2>
 		<div class="deck-picker">
@@ -26,5 +26,10 @@
 <div class="cf"></div>
 	<script type="text/javascript" src="./js/jquery-1.7.1.min.js"></script>
 	<script type="text/javascript" src="./js/blandband.js"></script>
+	<script type="text/javascript">
+	$(document).ready(function(){
+		init();
+	});
+	</script>
 </body>
 </html>
