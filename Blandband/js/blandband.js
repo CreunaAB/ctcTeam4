@@ -178,6 +178,7 @@ function foo(parent) {
 
 	this.titleWasGenerated = function (title) {
 		var label = createTextElement('<p>', title);
+		label.addClass('data');
 		_parent.find('.imageWrapper img').before(label);	
 	}
 }
