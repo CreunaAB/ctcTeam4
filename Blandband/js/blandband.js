@@ -112,7 +112,8 @@ function validatePlaylist(val, maxLength, parent)
 		alert("Din playlist är tyvärr för lång, prova med någon annan!");
 	}
 	else {
-		console.log(new m.Track.fromURI(playlist.data.all()[0]));
+		// Send all tracks in playlist for setting labels
+		generateTitle(new m.Track.fromURI(playlist.data.all());
 		createPlaylistView(playlist, parent, maxSecondsPerSide);
 	}
 }
